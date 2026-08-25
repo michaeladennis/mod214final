@@ -1,6 +1,7 @@
 # load libraries
 library(tidyverse)
 
+# me editing for tutorial pt 2
 # read in data
 prm <- read_csv("data/knb-lter-luq.20.4923064/RioMameyesPuenteRoto.csv", na = c("", "NA"))
 bq1 <- read_csv("data/knb-lter-luq.20.4923064/QuebradaCuenca1-Bisley.csv", na = c("", "NA"))

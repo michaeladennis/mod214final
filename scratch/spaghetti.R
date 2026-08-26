@@ -1,6 +1,7 @@
 # load libraries
 library(tidyverse)
 
+# changed prm to prmm for tutorial purposes
 # read in data
 prm <- read_csv(
   "data/knb-lter-luq.20.4923064/RioMameyesPuenteRoto.csv",

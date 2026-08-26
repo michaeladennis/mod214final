@@ -125,7 +125,6 @@ for (i in 1:nrow(prm_smoothed)) {
   prm_smoothed$mean_no3[i] <- mean_no3_window
 }
 
-
 # plot moving average for prm
 
 # join rivers

@@ -1,5 +1,6 @@
 # load libraries
 library(tidyverse)
+source("R/moving-average.R")
 
 # changed prm to prmm for tutorial purposes
 # read in data
@@ -42,89 +43,9 @@ glimpse(prm_iso)
 
 
 # process the data for the moving averages (9 wk avgs)
+prm_moving_avg <- moving_average(prm)
+glimpse(prm_moving_avg)
 
-# Before you can fill in a moving average, you need somewhere to put it. Build a
-#  tibble called qs_smoothed with one row per window: a window_start column stepping
-# 9 days at a time from the first sample date to the last, and blank (NA) k_mgl and
-# mg_mgl columns to fill in later.
-
-prm_smoothed <- tibble(
-  "window" = c(1:41),
-)
-
-prm_smoothed <- prm_smoothed |>
-  mutate("start" = seq(ymd("1988-01-01"), ymd("1994-12-31"), by = "9 weeks")) |>
-  mutate("end" = seq(ymd("1988-01-01"), ymd("1994-12-31"), by = "9 weeks")) |>
-  mutate("mean_k" = integer(41)) |>
-  mutate("mean_mg" = integer(41)) |>
-  mutate("mean_nh4" = integer(41)) |>
-  mutate("mean_no3" = integer(41)) |>
-  mutate("mean_ca" = integer(41))
-
-for (i in 1:nrow(prm_smoothed)) {
-  # i is our iterator
-  # 1:nrow(prm_iso) is our sequence
-  # i will take on those values, one at a time
-  # What's the start of the window? call it w1
-  w1 <- prm_smoothed$start[i]
-
-  # What's the end of the window? call that w2
-  w2 <- w1 + 63
-  # What K values are inside that window
-  k_window <- prm_iso$K[
-    prm_iso$Sample_Date >= w1 &
-      prm_iso$Sample_Date < w2
-  ]
-
-  # what's the mean?
-  mean_k_window <- mean(k_window, na.rm = TRUE)
-  # how do you put it in the result?
-  prm_smoothed$mean_k[i] <- mean_k_window
-
-  # What mg values are inside that window
-  mg_window <- prm_iso$Mg[
-    prm_iso$Sample_Date >= w1 &
-      prm_iso$Sample_Date < w2
-  ]
-
-  # what's the mean?
-  mean_mg_window <- mean(mg_window, na.rm = TRUE)
-  # how do you put it in the result?
-  prm_smoothed$mean_mg[i] <- mean_mg_window
-
-  # What ca values are inside that window
-  ca_window <- prm_iso$Ca[
-    prm_iso$Sample_Date >= w1 &
-      prm_iso$Sample_Date < w2
-  ]
-
-  # what's the mean?
-  mean_ca_window <- mean(ca_window, na.rm = TRUE)
-  # how do you put it in the result?
-  prm_smoothed$mean_ca[i] <- mean_ca_window
-
-  # What nh4 values are inside that window
-  nh4_window <- prm_iso$`NH4-N`[
-    prm_iso$Sample_Date >= w1 &
-      prm_iso$Sample_Date < w2
-  ]
-
-  # what's the mean?
-  mean_nh4_window <- mean(nh4_window, na.rm = TRUE)
-  # how do you put it in the result?
-  prm_smoothed$mean_nh4[i] <- mean_nh4_window
-
-  # What no3 values are inside that window
-  no3_window <- prm_iso$`NO3-N`[
-    prm_iso$Sample_Date >= w1 &
-      prm_iso$Sample_Date < w2
-  ]
-
-  # what's the mean?
-  mean_no3_window <- mean(no3_window, na.rm = TRUE)
-  # how do you put it in the result?
-  prm_smoothed$mean_no3[i] <- mean_no3_window
-}
 
 # plot moving average for prm
 
@@ -132,8 +53,8 @@ for (i in 1:nrow(prm_smoothed)) {
 
 # pivot longer
 prm_longer <- pivot_longer(
-  prm_smoothed,
-  cols = mean_k:mean_ca,
+  prm_moving_avg,
+  cols = k_mgl:ca_mgl,
   names_to = "Ion",
   values_to = "Concentration"
 )
@@ -142,7 +63,7 @@ prm_longer <- pivot_longer(
 ggplot(
   prm_longer,
   mapping = aes(
-    x = start,
+    x = window_start,
     y = Concentration,
     color = Ion
   )

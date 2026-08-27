@@ -46,16 +46,12 @@ glimpse(prm_iso)
 prm_moving_avg <- moving_average(prm)
 glimpse(prm_moving_avg)
 bq1_moving_avg <- moving_average(bq1)
-glimpse(prm_moving_bq1)
+glimpse(bq1_moving_avg)
 bq2_moving_avg <- moving_average(bq2)
-glimpse(prm_moving_bq2)
+glimpse(bq2_moving_avg)
 bq3_moving_avg <- moving_average(bq3)
-glimpse(prm_moving_bq3)
+glimpse(bq3_moving_avg)
 
-
-# plot moving average for prm
-
-# join rivers
 
 # pivot longer
 prm_longer <- pivot_longer(
@@ -64,15 +60,53 @@ prm_longer <- pivot_longer(
   names_to = "Ion",
   values_to = "Concentration"
 )
+bq1_longer <- pivot_longer(
+  bq1_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+
+bq2_longer <- pivot_longer(
+  bq2_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+
+bq3_longer <- pivot_longer(
+  bq3_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+
+prm_longer <- mutate(prm_longer, Stream = "PRM")
+glimpse(prm_longer)
+bq1_longer <- mutate(bq1_longer, Stream = "BQ1")
+glimpse(bq1_longer)
+bq2_longer <- mutate(bq2_longer, Stream = "BQ2")
+glimpse(bq2_longer)
+bq3_longer <- mutate(bq3_longer, Stream = "BQ3")
+glimpse(bq3_longer)
+
+
+# Join stream data frames
+all_streams <- rbind(prm_longer, bq1_longer, bq2_longer, bq3_longer)
+glimpse(all_streams)
 
 # visualize using ggplot
 ggplot(
-  prm_longer,
+  all_streams,
   mapping = aes(
     x = window_start,
     y = Concentration,
-    color = Ion
+    shape = Stream
   )
 ) +
   geom_line() +
-  facet_wrap(~Ion, scales = "free")
+  facet_wrap(~Ion, scales = "free", ncol = 1, space = "fixed") +
+  theme_minimal()
+theme(legend.position = "top") +
+  geom_abline(window_start = "1989-09-18") +
+  aes()

@@ -1,0 +1,62 @@
+# Background
+Load necessary libraries and source functions.
+```{r}
+library(tidyverse)
+source("../R/moving-average.R")
+```
+
+# Data
+Load data for the four rivers using read_csv.
+```{r}
+prm <- read_csv(
+  "../data/knb-lter-luq.20.4923064/RioMameyesPuenteRoto.csv",
+  na = c("", "NA")
+)
+bq1 <- read_csv(
+  "../data/knb-lter-luq.20.4923064/QuebradaCuenca1-Bisley.csv",
+  na = c("", "NA")
+)
+bq2 <- read_csv(
+  "../data/knb-lter-luq.20.4923064/QuebradaCuenca2-Bisley.csv",
+  na = c("", "NA")
+)
+bq3 <- read_csv(
+  "../data/knb-lter-luq.20.4923064/QuebradaCuenca3-Bisley.csv",
+  na = c("", "NA")
+)
+```
+
+# Methods
+
+Use the moving_average() function to determine the moving average for each ion within each of the four rivers and pivot the data frame to be longer.
+```{r}
+# process the data for the moving averages (9 wk avgs)
+prm_moving_avg <- moving_average(prm)
+glimpse(prm_moving_avg)
+
+# pivot longer
+prm_longer <- pivot_longer(
+  prm_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+```
+
+# Results
+
+To view the updates results, run this ggplot code chunk where we us the longer data frame to view the stream chemistry by the concentration of each ion.
+``` {r}
+# visualize using ggplot
+ggplot(
+  prm_longer,
+  mapping = aes(
+    x = window_start,
+    y = Concentration,
+    color = Ion
+  )
+) +
+  geom_line() +
+  facet_wrap(~Ion, scales = "free")
+```
+ 

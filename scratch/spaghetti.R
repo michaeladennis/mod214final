@@ -45,6 +45,12 @@ glimpse(prm_iso)
 # process the data for the moving averages (9 wk avgs)
 prm_moving_avg <- moving_average(prm)
 glimpse(prm_moving_avg)
+bq1_moving_avg <- moving_average(bq1)
+glimpse(prm_moving_bq1)
+bq2_moving_avg <- moving_average(bq2)
+glimpse(prm_moving_bq2)
+bq3_moving_avg <- moving_average(bq3)
+glimpse(prm_moving_bq3)
 
 
 # plot moving average for prm

@@ -21,7 +21,7 @@ bq3 <- read_csv(
   na = c("", "NA")
 )
 
-# keep only the necessary cols
+# keep only the necessary cols so data is not messy
 prm <- prm |>
   select(Sample_ID, Sample_Date, K, `NH4-N`, `NO3-N`, Mg, Ca)
 
@@ -42,7 +42,7 @@ bq2_moving_avg <- moving_average(bq2)
 bq3_moving_avg <- moving_average(bq3)
 
 
-# pivot longer
+# pivot longer so we can plot by ion concentration
 prm_longer <- pivot_longer(
   prm_moving_avg,
   cols = k_mgl:ca_mgl,
@@ -70,14 +70,14 @@ bq3_longer <- pivot_longer(
   values_to = "Concentration"
 )
 
-# add a descriptive column for stream name before binding
+# add a descriptive column for stream name before binding so we can differentiate which is which
 prm_longer <- mutate(prm_longer, Stream = "PRM")
 bq1_longer <- mutate(bq1_longer, Stream = "BQ1")
 bq2_longer <- mutate(bq2_longer, Stream = "BQ2")
 bq3_longer <- mutate(bq3_longer, Stream = "BQ3")
 
 
-# Join stream data frames
+# Join stream data frames so we can plot all together
 all_streams <- rbind(prm_longer, bq1_longer, bq2_longer, bq3_longer)
 
 write_csv(all_streams, "output/all_streams.csv")

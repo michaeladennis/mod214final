@@ -5,19 +5,19 @@ source("R/moving-average.R")
 # changed prm to prmm for tutorial purposes
 # read in data
 prm <- read_csv(
-  "data/knb-lter-luq.20.4923064/RioMameyesPuenteRoto.csv",
+  "data/RioMameyesPuenteRoto.csv",
   na = c("", "NA")
 )
 bq1 <- read_csv(
-  "data/knb-lter-luq.20.4923064/QuebradaCuenca1-Bisley.csv",
+  "data/QuebradaCuenca1-Bisley.csv",
   na = c("", "NA")
 )
 bq2 <- read_csv(
-  "data/knb-lter-luq.20.4923064/QuebradaCuenca2-Bisley.csv",
+  "data/QuebradaCuenca2-Bisley.csv",
   na = c("", "NA")
 )
 bq3 <- read_csv(
-  "data/knb-lter-luq.20.4923064/QuebradaCuenca3-Bisley.csv",
+  "data/QuebradaCuenca3-Bisley.csv",
   na = c("", "NA")
 )
 

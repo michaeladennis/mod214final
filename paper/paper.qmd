@@ -9,19 +9,19 @@ source("../R/moving-average.R")
 Load data for the four rivers using read_csv.
 ```{r}
 prm <- read_csv(
-  "data/RioMameyesPuenteRoto.csv",
+  "../data/RioMameyesPuenteRoto.csv",
   na = c("", "NA")
 )
 bq1 <- read_csv(
-  "data/QuebradaCuenca1-Bisley.csv",
+  "../data/QuebradaCuenca1-Bisley.csv",
   na = c("", "NA")
 )
 bq2 <- read_csv(
-  "data/QuebradaCuenca2-Bisley.csv",
+  "../data/QuebradaCuenca2-Bisley.csv",
   na = c("", "NA")
 )
 bq3 <- read_csv(
-  "data/QuebradaCuenca3-Bisley.csv",
+  "../data/QuebradaCuenca3-Bisley.csv",
   na = c("", "NA")
 )
 ```
@@ -96,7 +96,7 @@ all_streams <- rbind(prm_longer, bq1_longer, bq2_longer, bq3_longer)
 To view the updates results, run this ggplot code chunk where we us the longer data frame to view the stream chemistry by the concentration of each ion.
 ``` {r}
 # csv output
-write_csv(all_streams, "output/all_streams.csv")
+write_csv(all_streams, "../output/all_streams.csv")
 
 # visualize using ggplot
 ggplot(

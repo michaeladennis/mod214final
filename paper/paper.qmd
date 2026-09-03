@@ -9,19 +9,19 @@ source("../R/moving-average.R")
 Load data for the four rivers using read_csv.
 ```{r}
 prm <- read_csv(
-  "../data/knb-lter-luq.20.4923064/RioMameyesPuenteRoto.csv",
+  "data/RioMameyesPuenteRoto.csv",
   na = c("", "NA")
 )
 bq1 <- read_csv(
-  "../data/knb-lter-luq.20.4923064/QuebradaCuenca1-Bisley.csv",
+  "data/QuebradaCuenca1-Bisley.csv",
   na = c("", "NA")
 )
 bq2 <- read_csv(
-  "../data/knb-lter-luq.20.4923064/QuebradaCuenca2-Bisley.csv",
+  "data/QuebradaCuenca2-Bisley.csv",
   na = c("", "NA")
 )
 bq3 <- read_csv(
-  "../data/knb-lter-luq.20.4923064/QuebradaCuenca3-Bisley.csv",
+  "data/QuebradaCuenca3-Bisley.csv",
   na = c("", "NA")
 )
 ```
@@ -30,10 +30,28 @@ bq3 <- read_csv(
 
 Use the moving_average() function to determine the moving average for each ion within each of the four rivers and pivot the data frame to be longer.
 ```{r}
+
+# keep only the necessary cols
+prm <- prm |>
+  select(Sample_ID, Sample_Date, K, `NH4-N`, `NO3-N`, Mg, Ca)
+
+bq1_ <- bq1 |>
+  select(Sample_ID, Sample_Date, K, `NH4-N`, `NO3-N`, Mg, Ca)
+
+bq2 <- bq2 |>
+  select(Sample_ID, Sample_Date, K, `NH4-N`, `NO3-N`, Mg, Ca)
+
+bq3 <- bq3 |>
+  select(Sample_ID, Sample_Date, K, `NH4-N`, `NO3-N`, Mg, Ca)
+
+
 # process the data for the moving averages (9 wk avgs)
 prm_moving_avg <- moving_average(prm)
-glimpse(prm_moving_avg)
+bq1_moving_avg <- moving_average(bq1)
+bq2_moving_avg <- moving_average(bq2)
+bq3_moving_avg <- moving_average(bq3)
 
+# pivot longer
 # pivot longer
 prm_longer <- pivot_longer(
   prm_moving_avg,
@@ -41,22 +59,71 @@ prm_longer <- pivot_longer(
   names_to = "Ion",
   values_to = "Concentration"
 )
+bq1_longer <- pivot_longer(
+  bq1_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+
+bq2_longer <- pivot_longer(
+  bq2_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+
+bq3_longer <- pivot_longer(
+  bq3_moving_avg,
+  cols = k_mgl:ca_mgl,
+  names_to = "Ion",
+  values_to = "Concentration"
+)
+
+# add a descriptive column for stream name before binding
+prm_longer <- mutate(prm_longer, Stream = "PRM")
+bq1_longer <- mutate(bq1_longer, Stream = "BQ1")
+bq2_longer <- mutate(bq2_longer, Stream = "BQ2")
+bq3_longer <- mutate(bq3_longer, Stream = "BQ3")
+
+
+# Join stream data frames
+all_streams <- rbind(prm_longer, bq1_longer, bq2_longer, bq3_longer)
 ```
 
 # Results
 
 To view the updates results, run this ggplot code chunk where we us the longer data frame to view the stream chemistry by the concentration of each ion.
 ``` {r}
+# csv output
+write_csv(all_streams, "output/all_streams.csv")
+
 # visualize using ggplot
 ggplot(
-  prm_longer,
+  all_streams,
   mapping = aes(
     x = window_start,
     y = Concentration,
-    color = Ion
+    linetype = Stream
   )
 ) +
   geom_line() +
-  facet_wrap(~Ion, scales = "free")
+  facet_wrap(
+    vars(Ion),
+    scales = 'free_y',
+    ncol = 1,
+    strip.position = "left"
+  ) +
+  theme_bw() +
+  labs(
+    x = "Years",
+    y = "Concentration",
+    title = "Ion Concentrations in Streams"
+  ) +
+  geom_vline(
+    xintercept = ymd("1989-09-08"),
+    linetype = "dashed",
+    color = "black"
+  )
 ```
  

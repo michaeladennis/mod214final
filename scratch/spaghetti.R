@@ -5,19 +5,19 @@ source("R/moving-average.R")
 # changed prm to prmm for tutorial purposes
 # read in data
 prm <- read_csv(
-  "data/knb-lter-luq.20.4923064/RioMameyesPuenteRoto.csv",
+  "data/RioMameyesPuenteRoto.csv",
   na = c("", "NA")
 )
 bq1 <- read_csv(
-  "data/knb-lter-luq.20.4923064/QuebradaCuenca1-Bisley.csv",
+  "data/QuebradaCuenca1-Bisley.csv",
   na = c("", "NA")
 )
 bq2 <- read_csv(
-  "data/knb-lter-luq.20.4923064/QuebradaCuenca2-Bisley.csv",
+  "data/QuebradaCuenca2-Bisley.csv",
   na = c("", "NA")
 )
 bq3 <- read_csv(
-  "data/knb-lter-luq.20.4923064/QuebradaCuenca3-Bisley.csv",
+  "data/QuebradaCuenca3-Bisley.csv",
   na = c("", "NA")
 )
 
@@ -101,12 +101,24 @@ ggplot(
   mapping = aes(
     x = window_start,
     y = Concentration,
-    shape = Stream
+    linetype = Stream
   )
 ) +
   geom_line() +
-  facet_wrap(~Ion, scales = "free", ncol = 1, space = "fixed") +
-  theme_minimal()
-theme(legend.position = "top") +
-  geom_abline(window_start = "1989-09-18") +
-  aes()
+  facet_wrap(
+    vars(Ion),
+    scales = 'free_y',
+    ncol = 1,
+    strip.position = "left"
+  ) +
+  theme_bw() +
+  labs(
+    x = "Years",
+    y = "Concentration",
+    title = "Ion Concentrations in Streams"
+  ) +
+  geom_vline(
+    xintercept = ymd("1989-09-08"),
+    linetype = "dashed",
+    color = "black"
+  )

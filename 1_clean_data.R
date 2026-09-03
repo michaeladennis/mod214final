@@ -37,13 +37,9 @@ bq3 <- bq3 |>
 
 # process the data for the moving averages (9 wk avgs)
 prm_moving_avg <- moving_average(prm)
-glimpse(prm_moving_avg)
 bq1_moving_avg <- moving_average(bq1)
-glimpse(bq1_moving_avg)
 bq2_moving_avg <- moving_average(bq2)
-glimpse(bq2_moving_avg)
 bq3_moving_avg <- moving_average(bq3)
-glimpse(bq3_moving_avg)
 
 
 # pivot longer
@@ -76,13 +72,9 @@ bq3_longer <- pivot_longer(
 
 # add a descriptive column for stream name before binding
 prm_longer <- mutate(prm_longer, Stream = "PRM")
-glimpse(prm_longer)
 bq1_longer <- mutate(bq1_longer, Stream = "BQ1")
-glimpse(bq1_longer)
 bq2_longer <- mutate(bq2_longer, Stream = "BQ2")
-glimpse(bq2_longer)
 bq3_longer <- mutate(bq3_longer, Stream = "BQ3")
-glimpse(bq3_longer)
 
 
 # Join stream data frames
